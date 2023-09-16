@@ -1,0 +1,149 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  html {
+    color: #333;
+    font-size: 62.5%;
+    font-family: "Open Sans", sans-serif;
+  }
+
+  body {
+    position: relative;
+    
+  }
+
+  .button-handle {
+    background-color: rgb(101, 171, 80); 
+    color: #fff;
+    border: none;    
+    cursor: pointer;  
+    border-radius: 10px;
+  }
+
+  .button-handle:hover {
+    background-color: rgb(39, 105, 19); 
+  }
+
+  .main {
+    width: 100%;
+    min-height: 1000px;
+    display: block;
+    justify-content: center;
+  }
+
+  
+
+#form-log-out {
+    position: absolute;
+    border: 1px solid #000;
+    right:2rem;
+    top:2rem;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+
+  }
+
+  #form-log-out:hover {
+    background-color: #333;
+  }
+
+  .logo {
+    display: flex;
+    justify-content: space-around
+  }
+
+  .logo-to-do {
+    width: 18rem;
+    margin-left: 3rem;
+  }
+
+  .to-do-tittle{
+    text-align: center;
+    font-size: 3rem;
+    font-weight: 70rem;
+    margin-top: 3rem;
+  }
+
+  .to-do-handle {
+    display: flex;
+    margin: 2rem 50rem;
+    height: 3.6rem;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .task-input {
+    padding-left: 10px;
+    flex: 2;
+  }
+
+  .add-button {
+    flex: 1;
+    margin-left: 3rem ;
+
+  }
+  .cancel-button {
+    flex: 1;
+    margin-left: 3rem ;
+
+  }
+
+  .to-do-content {
+    position: relative;
+    margin-top: 4rem;
+    margin-left: 60rem;
+    margin-right: 60rem;
+    display: flex !important;
+    text-align: center;
+    height: 3.6rem;
+  }
+
+  .task {
+    flex: 1;
+    font-size: 15px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 95%;
+  }
+
+  .to-do-done {
+    height: 3.4rem;
+    margin-right: 10px;
+    position: absolute;
+    right: 55rem;
+
+  }
+
+  .edit-button{
+    flex:2;
+    margin-left: 3rem;
+
+  }
+
+  .delete-button{
+    flex: 2;
+    margin-left: 3rem;
+  }
+  
+  .filter {
+    position: relative;
+    display: flex;
+    margin-top: 2rem;
+    justify-content: center
+  }
+
+  .filter-title {
+    font-weight: 650;
+    right: 85rem;
+    font-size: 1.6rem;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+  }

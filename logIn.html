@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hung nee</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
+  
+</head>
+<body onload="checkLogIn()">
+
+  
+  <div class="main" >
+
+          
+
+          <form action="" method="POST" class="form" id="form-1">
+            <h3 class="heading">Đăng nhập</h3>
+        
+            <div class="spacer"></div>
+         
+            <div class="form-group">
+              <label for="email" class="form-label">Email</label>
+              <input id="email" name="email" type="text" placeholder="Nhập email của bạn" class="form-control">
+              <span class="form-message"></span>
+            </div>
+  
+            <div class="form-group">
+              <label for="user-name" class="form-label">Tên tài khoản</label>
+              <input id="user-name" name="user-name" type="text" placeholder="Nhập tên tài khoản của bạn" class="form-control">
+              <span class="form-message"></span>
+            </div>
+        
+            <div class="form-group">
+              <label for="password" class="form-label">Mật khẩu</label>
+              <input id="password" name="password" type="password" placeholder="Nhập mật khẩu" class="form-control">
+              <span class="form-message"></span>
+            </div>
+        
+            <span class="form-error-message" ></span>
+
+            <div class="remember-check">
+              <input type="checkbox" value="isRememberMe" id="remember-me">
+              <label class="remember-me" for="remember-me">Ghi nhớ</label>
+            </div>
+            
+            
+  
+            
+        
+            <button id="form-log-in" class="form-submit">Đăng nhập</button>
+            <hr class="spacer-hr">
+            <button id="form-sign-up" class="form-submit">Đăng ký</button>
+
+            
+          </form>
+
+          
+        </div>
+        
+        
+      </form>
+      </div>
+
+    
+</body>
+<script src="./logIn.js" ></script>
+</html>
