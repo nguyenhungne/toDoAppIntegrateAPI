@@ -2,6 +2,16 @@ function redirect() {
     window.location.replace('./logIn.html');
 }
 
+const checkLogIn = () => {
+    let loggedInAccount = JSON.parse(localStorage.getItem('loggedInAccount'));
+
+    console.log(loggedInAccount);
+
+    if ((loggedInAccount === null)){
+        redirect();
+    }
+}
+
 function toDoApp () {
     const taskInput = document.querySelector('.task-input');
     const addButton = document.querySelector('.add-button')
@@ -107,10 +117,7 @@ function toDoApp () {
 
     }
 
-    let tasksArray = [{
-        task:'dsadsada',
-        done: true,
-    }];
+    let tasksArray = [];
 
     let undoneTask = [];
     let doneTask=[];
@@ -226,12 +233,6 @@ function toDoApp () {
 
     toDoApp()
 
-    const checkLogIn = () => {
-        let loggedInAccount = JSON.parse(localStorage.getItem('loggedInAccount'));
-
-        if ((loggedInAccount === null)){
-            redirect();
-        }
-    }
+    
 
     
