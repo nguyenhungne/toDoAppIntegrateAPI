@@ -7,11 +7,33 @@ function toDoApp () {
     const addButton = document.querySelector('.add-button')
     const cancelButton = document.querySelector('.cancel-button');
 
+    let loggedInAccount = JSON.parse(localStorage.getItem('loggedInAccount'));
 
-    cancelButton.addEventListener('click', cancelHandel );
+    console.log();
 
-    function cancelHandel() { 
-       const toDoHandle = document.querySelector('.to-do-handle');
+    const headerToDo = document.querySelector('.to-do-app-header');
+    const welcomeUserParagraph = document.createElement('p');
+    welcomeUserParagraph.classList.add('wellcome-user');
+    welcomeUserParagraph.textContent = `Well come ${loggedInAccount.userName} to ToDoApp 4.0`;
+
+    headerToDo.appendChild(welcomeUserParagraph);
+
+    const logoApp = document.querySelector('.logo-app');
+    
+    logoApp.addEventListener('click', showMenu );
+
+    function showMenu() {
+        const menu = document.getElementById('myDropdown');
+        menu.classList.toggle('show');        
+    }
+
+
+
+
+    cancelButton.addEventListener('click', handleCancel );
+
+    function handleCancel() { 
+    //    const toDoHandle = document.querySelector('.to-do-handle');
        taskInput.value = '';
        taskInput.focus();
     }
@@ -29,27 +51,17 @@ function toDoApp () {
             const toDoContent = document.createElement("div");
             toDoContent.classList.add("to-do-content");
 
-            const toDoDoneInput = document.createElement("input");
-            toDoDoneInput.classList.add("to-do-done");
-            toDoDoneInput.type = "checkbox";
-            toDoDoneInput.setAttribute("checked", "checked");
+            const doneMessage = document.createElement("p");
+            doneMessage.classList.add("done-message");
+            doneMessage.innerHTML ='DONE';
+
 
             const taskP = document.createElement("p");
-            taskP.classList.add("task");
+            taskP.classList.add("task-done");
             taskP.textContent = `${element.task}`
 
-            const editButton = document.createElement("button");
-            editButton.classList.add("edit-button", "button-handle");
-            editButton.textContent = "Edit";
-
-            const deleteButton = document.createElement("button");
-            deleteButton.classList.add("delete-button", "button-handle");
-            deleteButton.textContent = "Delete";
-
-            toDoContent.appendChild(toDoDoneInput);
+            toDoContent.appendChild(doneMessage);
             toDoContent.appendChild(taskP);
-            toDoContent.appendChild(editButton);
-            toDoContent.appendChild(deleteButton);
 
             const taskContent = document.querySelector(".task-content");
 
@@ -66,9 +78,9 @@ function toDoApp () {
             const toDoContent = document.createElement("div");
             toDoContent.classList.add("to-do-content");
 
-            const toDoDoneInput = document.createElement("input");
-            toDoDoneInput.classList.add("to-do-done");
-            toDoDoneInput.type = "checkbox";
+            const checkDone = document.createElement("input");
+            checkDone.classList.add("to-do-done");
+            checkDone.type = "checkbox";
 
             const taskP = document.createElement("p");
             taskP.classList.add("task");
@@ -82,7 +94,7 @@ function toDoApp () {
             deleteButton.classList.add("delete-button", "button-handle");
             deleteButton.textContent = "Delete";
 
-            toDoContent.appendChild(toDoDoneInput);
+            toDoContent.appendChild(checkDone);
             toDoContent.appendChild(taskP);
             toDoContent.appendChild(editButton);
             toDoContent.appendChild(deleteButton);
@@ -95,7 +107,10 @@ function toDoApp () {
 
     }
 
-    let tasksArray = [];
+    let tasksArray = [{
+        task:'dsadsada',
+        done: true,
+    }];
 
     let undoneTask = [];
     let doneTask=[];
@@ -139,9 +154,9 @@ function toDoApp () {
 
         //handle edit task 
         for (let i = 0; i < editButton.length; i++) {
-            editButton[i].addEventListener('click',editHandle);
+            editButton[i].addEventListener('click',handleEdit);
 
-            function editHandle () {
+            function handleEdit () {
                     taskInput.value = '';
                     taskInput.focus();
                     undoneTask.splice(i, 1);
@@ -157,9 +172,9 @@ function toDoApp () {
     const deleteButton = document.querySelectorAll('.delete-button');
 
     for(let i = 0; i < deleteButton.length; i++) {
-            deleteButton[i].addEventListener('click', deleteHandle);
+            deleteButton[i].addEventListener('click', handleDelete);
 
-            function deleteHandle() {
+            function handleDelete() {
                     undoneTask.splice(i, 1);
                     renderTask(undoneTask);
                     select();
@@ -169,9 +184,8 @@ function toDoApp () {
     const checkBoxDone = document.querySelectorAll('.to-do-done');
 
     for (let i = 0; i < undoneTask.length; i++) {
-        console.log(checkBoxDone[i]);
-        checkBoxDone[i].addEventListener('change', checkedHandle);
-        function checkedHandle () {
+        checkBoxDone[i].addEventListener('change', handleChecked);
+        function handleChecked () {
             undoneTask[i].done = true;
             doneTask.push(undoneTask[i]);
             undoneTask.splice(i, 1);
@@ -203,13 +217,11 @@ function toDoApp () {
 
     let currentAccount = JSON.parse(localStorage.getItem('loggedInAccount'));
 
-    console.log(currentAccount);
-
     // person["address"] = "123 Main Street";
 
-    currentAccount["tasks"] = JSON.stringify(tasksArray);
+    // currentAccount = JSON.stringify(tasksArray);
 
-    localStorage.setItem('loggedInAccount', JSON.stringify(currentAccount));
+    // localStorage.setItem('loggedInAccount', JSON.stringify(currentAccount));
     };
 
     toDoApp()

@@ -147,61 +147,61 @@ const userNameValidCheck = validateSubmit(userName, userNameErrorMessage, regexU
 }
 
 //Submit: 
-let accountsQuantity = 0;
 let accountsList = [];
 let Accounts =  JSON.parse(localStorage.getItem('Accounts'));
 
-formSubmit.addEventListener('click', submit = (e) => {
-    e.preventDefault();
-    let clickedSubmit = true;
-    let validCheck = validity(clickedSubmit);
+formSubmit.addEventListener('click', submit );
 
-
-    Accounts =  JSON.parse(localStorage.getItem('Accounts'));
-
-    if ( Accounts === null) {
-        if (validCheck) {
-            accountsQuantity = accountsQuantity + 1;
-            
-            accountsList.push({
-                'user' : `User${accountsQuantity}`,
-                'email' : email.value,
-                'userName' : userName.value,
-                'password' : password.value,
-            }); 
-        }
-        
-        localStorage.setItem("Accounts",JSON.stringify(accountsList));
-
-
-        setTimeout(window.location.replace('./logIn.html'), 2000);
-    } 
-
-    if (!(Accounts === null)) {
-        console.log(Accounts)
-        if (validCheck) {
-            accountsQuantity = accountsQuantity + 1;
-
-            let Accounts = JSON.parse(localStorage.getItem("Accounts"));
+function submit(e) {
+        e.preventDefault();
+        let clickedSubmit = true;
+        let validCheck = validity(clickedSubmit);
     
-           Accounts.push(
-                 {
-                    'user' : `User${accountsQuantity}`,
+        Accounts =  JSON.parse(localStorage.getItem('Accounts'));
+    
+        if ( Accounts === null) {
+            if (validCheck) {
+                
+                accountsList.push({
                     'email' : email.value,
                     'userName' : userName.value,
                     'password' : password.value,
-                }
-            )
-
-            
-            localStorage.setItem("Accounts",JSON.stringify(Accounts));
-
-            setTimeout(window.location.replace('./logIn.html'), 2000);
-            
+                    'phoneNumber' : phoneNumber.value,
+                    'projects' : [],
+                }); 
             }
-     }
-
-} )
+            
+            localStorage.setItem("Accounts",JSON.stringify(accountsList));
+    
+    
+            setTimeout(window.location.replace('./logIn.html'), 2000);
+        } 
+    
+        if (Accounts) {
+            if (validCheck) {
+    
+                let Accounts = JSON.parse(localStorage.getItem("Accounts"));
+        
+               Accounts.push(
+                     {
+                        'email' : email.value,
+                        'userName' : userName.value,
+                        'password' : password.value,
+                        'phoneNumber' : phoneNumber.value,
+                        'projects' : [],
+                    }
+                )
+    
+                
+                localStorage.setItem("Accounts",JSON.stringify(Accounts));
+    
+                setTimeout(window.location.replace('./logIn.html'), 2000);
+                
+                }
+         }
+    
+    }
+ 
 
 const checkLogIn = () => {
     let loggedInAccount = JSON.parse(localStorage.getItem('loggedInAccount'));

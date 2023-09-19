@@ -1,0 +1,105 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+html {
+  color: #333;
+  font-size: 62.5%;
+  font-family: "Open Sans", sans-serif;
+}
+
+body {
+  position: relative;
+  
+}
+
+.to-do-app-header {
+  z-index: 10;
+  background-color: rgb(101, 171, 80);
+  width: 100%;
+  display: flex;
+  position: fixed;
+  height: 5rem;
+  justify-content: center;
+  margin: 0 auto;
+  align-items: center;
+  top: 0;
+}
+
+.wellcome-user {
+  color: #fff;
+  height: max-content;
+  overflow: auto;
+  font-size: 3rem;
+}
+
+.logo-app {
+  position: absolute;
+  top: 0.4rem;
+  left: 1rem;
+  width: 4rem;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  position: absolute;
+  justify-content: space-around;
+  width: 15rem;
+  height: 10rem;
+  top: 4rem;
+  left: 2.3rem;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  background-color: #e4eff7;
+  z-index: 1;
+}
+
+.show { 
+  display: flex;
+}
+
+.dropdown-content a {
+  display: flex;
+  font-size: 3rem;
+  align-items: center;
+  height: 100%;
+  font-size: 1rem;
+  padding-left: 1rem;
+  text-decoration: none;
+  justify-content: center;
+  cursor: pointer;
+  color: #e47986;
+}
+
+.dropdown-content a:hover {
+  background-color: #9ab9d0 ;
+  border-radius: 4rem;
+}
+
+.content {
+  margin-top: 5rem;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 80%;
+  margin-left: 10%;
+}
+
+td, th {
+  border: 1px solid #daafb4;
+  text-align: left;
+  padding: 8px;
+  font-size: 2rem;
+}
+
+tr:nth-child(even) {
+  background-color: rgb(198, 224, 191);
+}
+
+tr:nth-child(odd) {
+  background-color: #daabb1;
+}
