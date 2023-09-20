@@ -10,7 +10,7 @@ function logOut() {
   function logOutHandle() {
     localStorage.removeItem("loggedInAccount");
     sessionStorage.removeItem("loggedInAccount");
-    redirect("http://127.0.0.1:5500/logIn.html");
+    redirect("http://127.0.0.1:5500/htmls/logIn.html");
   }
 }
 
