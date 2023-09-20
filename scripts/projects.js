@@ -96,7 +96,7 @@ function toDoApp () {
 
             const SelectButton = document.createElement("button");
             SelectButton.classList.add("select-button", "button-handle");
-            SelectButton.textContent = "Select";
+            SelectButton.textContent = "Detail";
 
             const deleteButton = document.createElement("button");
             deleteButton.classList.add("delete-button", "button-handle");
