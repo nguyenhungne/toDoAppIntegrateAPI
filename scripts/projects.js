@@ -15,9 +15,9 @@ function toDoApp () {
     const addButton = document.querySelector('.add-button')
     const cancelButton = document.querySelector('.cancel-button');
 
+    let Accounts = JSON.parse(localStorage.getItem('Accounts'));
     let loggedInAccount = JSON.parse(localStorage.getItem('loggedInAccount'));
 
-    console.log();
 
     const headerToDo = document.querySelector('.to-do-app-header');
     const welcomeUserParagraph = document.createElement('p');
@@ -115,21 +115,22 @@ function toDoApp () {
 
     }
 
-    let projectsArray = [];
+    let projectsArray = loggedInAccount.projects;
 
     let undoneProjects = [];
     let doneProjects=[];
 
 
-    projectsArray.forEach((task) => {
-        if (task.done === false) {
-            undoneProjects.push(task);
-        } else if(task.done === true) {
-            doneProjects.push(task);
+    projectsArray.forEach((project) => {
+        if (project.done === false) {
+            undoneProjects.push(project);
+        } else if(project.done === true) {
+            doneProjects.push(project);
         }
     })
 
     renderProjects(undoneProjects);
+    select();
 
     //handle add task
     addButton.addEventListener('click', addTask);
@@ -142,6 +143,7 @@ function toDoApp () {
         undoneProjects.push({
             id: id,
             project: taskInput.value,
+            done:false,
         });
         
         taskInput.value = '';
@@ -205,6 +207,7 @@ function toDoApp () {
             undoneProjects.splice(i, 1);
             renderProjects(undoneProjects);
             select();
+            handleUpdate();
         }
     }
 
@@ -235,7 +238,6 @@ function toDoApp () {
 
     } 
     
-    let Accounts = JSON.parse(localStorage.getItem('Accounts'));
 
     Accounts.forEach(function (account,index,array) {
         if (account.userName === loggedInAccount.userName) {

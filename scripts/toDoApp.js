@@ -117,10 +117,15 @@ function toDoApp () {
 
     }
 
-    let tasksArray = [];
+    let tasksArray = [{
+        task: "task",
+        done:false,
+    }];
+
 
     let undoneTask = [];
     let doneTask=[];
+
 
 
     tasksArray.forEach((task) => {
@@ -132,6 +137,8 @@ function toDoApp () {
     })
 
     renderTask(undoneTask);
+    select();
+
 
     //handle add task
     addButton.addEventListener('click', addTask);
