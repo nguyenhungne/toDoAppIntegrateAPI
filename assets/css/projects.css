@@ -11,19 +11,18 @@ html {
 
 body {
   position: relative;
-  
 }
 
 .button-handle {
-  background-color: rgb(101, 171, 80); 
+  background-color: rgb(101, 171, 80);
   color: #fff;
-  border: none;    
-  cursor: pointer;  
+  border: none;
+  cursor: pointer;
   border-radius: 10px;
 }
 
 .button-handle:hover {
-  background-color: rgb(39, 105, 19); 
+  background-color: rgb(39, 105, 19);
 }
 
 .main {
@@ -34,18 +33,15 @@ body {
   justify-content: center;
 }
 
-
-
 #form-log-out {
   z-index: 11;
   position: fixed;
   border: 1px solid #000;
-  right:2rem;
-  top:0.5rem;
+  right: 2rem;
+  top: 0.5rem;
   padding: 10px;
   border-radius: 10px;
   cursor: pointer;
-
 }
 
 #form-log-out:hover {
@@ -63,7 +59,7 @@ body {
   margin-left: 3rem;
 }
 
-.to-do-tittle{
+.to-do-tittle {
   text-align: center;
   font-size: 3rem;
   font-weight: 70rem;
@@ -87,13 +83,11 @@ body {
 
 .add-button {
   flex: 1;
-  margin-left: 3rem ;
-
+  margin-left: 3rem;
 }
 .cancel-button {
   flex: 1;
-  margin-left: 3rem ;
-
+  margin-left: 3rem;
 }
 
 .to-do-content {
@@ -104,7 +98,7 @@ body {
   display: flex !important;
   text-align: center;
   height: 3.6rem;
-  justify-content: space-between
+  justify-content: space-between;
 }
 
 .task {
@@ -122,16 +116,14 @@ body {
   margin-right: 10px;
   position: absolute;
   right: 55rem;
-
 }
 
-.select-button{
-  flex:2;
+.select-button {
+  flex: 2;
   margin-left: 3rem;
-
 }
 
-.delete-button{
+.delete-button {
   flex: 2;
   margin-left: 3rem;
 }
@@ -140,7 +132,7 @@ body {
   position: relative;
   display: flex;
   margin-top: 2rem;
-  justify-content: center
+  justify-content: center;
 }
 
 .filter-title {
@@ -150,7 +142,6 @@ body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-
 }
 
 .done-message {
@@ -166,7 +157,6 @@ body {
   transform: translateY(-50%);
   font-weight: 600;
   font-size: 1.7rem;
-
 }
 
 .to-do-app-header {
@@ -206,12 +196,12 @@ body {
   left: 2.3rem;
   display: none;
   flex-direction: column;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   background-color: #e4eff7;
   z-index: 1;
 }
 
-.show { 
+.show {
   display: flex;
 }
 
@@ -229,9 +219,6 @@ body {
 }
 
 .dropdown-content a:hover {
-  background-color: #9ab9d0 ;
+  background-color: #9ab9d0;
   border-radius: 4rem;
 }
-
-
-

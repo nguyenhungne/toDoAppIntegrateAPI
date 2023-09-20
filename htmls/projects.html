@@ -1,70 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WELCOME TO TODOAPP BY NGUYEN HUNG</title>
-    <link rel="stylesheet" href="../assets/css/projects.css">
-</head>
-<body onload="checkLogIn()">
-    <header class="to-do-app-header" >
-        
-            <img class="logo-app" src="../assets/css/img/logo.png">
-            <div id="myDropdown" class="dropdown-content">
-                <a href="./projects.html">Home</a>
-                <a href="#about">About</a>
-                <a href="#contact">Contact</a>
-              </div>
-        
+    <link rel="stylesheet" href="../assets/css/projects.css" />
+  </head>
+  <body onload="checkLogIn()">
+    <header class="to-do-app-header">
+      <img class="logo-app" src="../assets/css/img/logo.png" />
+      <div id="myDropdown" class="dropdown-content">
+        <a href="./projects.html">Home</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
     </header>
     <div class="main">
+      <button id="form-log-out">Log out</button>
 
-
-
-        <button id="form-log-out" >Log out</button>
-
-        <div class="to-do-app">
-
-            <div class="logo">
-                <img class="logo-to-do"  src="../assets/css/img/logo.png"  />
-            </div>
-                
+      <div class="to-do-app">
+        <div class="logo">
+          <img class="logo-to-do" src="../assets/css/img/logo.png" />
         </div>
-            
-        <div class="to-do-tittle">TO DO PROJECTS</div>
+      </div>
 
-        <div class="to-do-handle">
-            <input class="task-input" type="text" placeholder="Project name...">
-            <button class="add-button button-handle" >Add</button>
-            <button class="cancel-button button-handle">Cancel</button>
+      <div class="to-do-tittle">TO DO PROJECTS</div>
 
+      <div class="to-do-handle">
+        <input class="task-input" type="text" placeholder="Project name..." />
+        <button class="add-button button-handle">Add</button>
+        <button class="cancel-button button-handle">Cancel</button>
+      </div>
+
+      <div class="task-content">
+        <div class="to-do-content">
+          <p class="done-message">DONE</p>
+          <p class="task-done">task 1</p>
         </div>
+      </div>
 
-        <div class="task-content">
-            <div class="to-do-content">
-                <p class="done-message">DONE</p>
-                <p class="task-done" >task 1</p>
-            </div>
-            
-        </div>
-
-        
-
-        <div class="filter">
-            <p class="filter-title">Filter : </p>
-            <select name="filter-options" id="filter-options">
-                <option value="UNDONE">UNDONE</option>
-                <option value="DONE">DONE</option>
-
-            </select>
-        </div>
-
-
-
+      <div class="filter">
+        <p class="filter-title">Filter :</p>
+        <select name="filter-options" id="filter-options">
+          <option value="UNDONE">UNDONE</option>
+          <option value="DONE">DONE</option>
+        </select>
+      </div>
     </div>
-    
-</body>
+  </body>
 
-<script src="../scripts/logOut.js" ></script>
-<script src="../scripts/projects.js" ></script>
+  <script src="../scripts/logOut.js"></script>
+  <script src="../scripts/projects.js"></script>
 </html>
