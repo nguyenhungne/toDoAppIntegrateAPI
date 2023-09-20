@@ -1,70 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hung nee</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-  
-</head>
-<body onload="checkLogIn()">
-      <a id="log-in" href="./logIn.html">Log in</a>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+  </head>
+  <body onload="checkLogIn()">
+    <a id="log-in" href="./logIn.html">Log in</a>
 
+    <div class="main">
+      <form action="" method="POST" class="form" id="form-1">
+        <h3 class="heading">Thành viên đăng ký</h3>
 
-      <div class="main">
-          <form action="" method="POST" class="form" id="form-1">
-            <h3 class="heading">Thành viên đăng ký</h3>
-        
-            <div class="spacer"></div>
-        
-            <div class="form-group">
-              <label for="fullname" class="form-label">Tên đầy đủ</label>
-              <input id="fullname" name="fullname" type="text" placeholder="VD: Nguyễn Hùng" class="form-control">
-              <span class="form-message"></span>
-            </div>
-        
-            <div class="form-group">
-              <label for="email" class="form-label">Email</label>
-              <input id="email" name="email" type="text" placeholder="VD: email@domain.com" class="form-control">
-              <span class="form-message"></span>
-            </div>
-  
-            <div class="form-group">
-              <label for="user-name" class="form-label">Tên tài khoản</label>
-              <input id="user-name" name="user-name" type="text" placeholder="VD: nguyenhung" class="form-control">
-              <span class="form-message"></span>
-            </div>
-  
-            <div class="form-group">
-              <label for="phone-number" class="form-label">Số điện thoại(+84)</label>
-              <input id="phone-number" name="phone-number" type="text" placeholder="VD: 0385634JQK" class="form-control">
-              <span class="form-message"></span>
-            </div>
-  
-        
-            <div class="form-group">
-              <label for="password" class="form-label">Mật khẩu</label>
-              <input id="password" name="password" type="password" placeholder="Nhập mật khẩu" class="form-control">
-              <span class="form-message"></span>
-            </div>
-        
-            <span class="form-error-message" ></span>
-            
-            
-  
-            
-        
-            <button id="form-submit" class="form-submit">Đăng ký</button>
-            <button id="form-log-in" class="form-submit hidden">Đăng nhập</button>
-          </form>
-        
+        <div class="spacer"></div>
+
+        <div class="form-group">
+          <label for="fullname" class="form-label">Tên đầy đủ</label>
+          <input
+            id="fullname"
+            name="fullname"
+            type="text"
+            placeholder="VD: Nguyễn Hùng"
+            class="form-control"
+          />
+          <span class="form-message"></span>
         </div>
-  
-  
-          </form>
-      </div>
 
-    
-</body>
-<script src="../scripts/signUp.js"></script> 
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <input
+            id="email"
+            name="email"
+            type="text"
+            placeholder="VD: email@domain.com"
+            class="form-control"
+          />
+          <span class="form-message"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="user-name" class="form-label">Tên tài khoản</label>
+          <input
+            id="user-name"
+            name="user-name"
+            type="text"
+            placeholder="VD: nguyenhung"
+            class="form-control"
+          />
+          <span class="form-message"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="phone-number" class="form-label"
+            >Số điện thoại(+84)</label
+          >
+          <input
+            id="phone-number"
+            name="phone-number"
+            type="text"
+            placeholder="VD: 0385634JQK"
+            class="form-control"
+          />
+          <span class="form-message"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Mật khẩu</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Nhập mật khẩu"
+            class="form-control"
+          />
+          <span class="form-message"></span>
+        </div>
+
+        <span class="form-error-message"></span>
+
+        <button id="form-submit" class="form-submit">Đăng ký</button>
+        <button id="form-log-in" class="form-submit hidden">Đăng nhập</button>
+      </form>
+    </div>
+  </body>
+  <script src="../scripts/signUp.js"></script>
 </html>
