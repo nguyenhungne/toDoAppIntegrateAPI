@@ -123,7 +123,12 @@ function toDoApp() {
 
   //handle add task
   addButton.addEventListener("click", addTask);
-  let id = 0;
+  let id =0;
+  if (loggedInAccount.projects == []) {
+    id =0;
+  } else {
+    id = loggedInAccount.projects[loggedInAccount.projects.length -1].id;
+  }
 
   function addTask() {
     id += 1;
