@@ -5,8 +5,6 @@ function redirect() {
 const checkLogIn = () => {
   let loggedInAccount = JSON.parse(localStorage.getItem("loggedInAccount"));
 
-  console.log(loggedInAccount);
-
   if (loggedInAccount === null) {
     redirect();
   }
@@ -106,9 +104,62 @@ function toDoApp() {
     });
   }
 
-  
+  let projects = JSON.parse(localStorage.getItem("projects"));
 
+  if (projects.length > 0) {
+  } else {
+    projects = [
+      {
+        projectsId: 0,
+        tasks: [
+          {
+            task: "quet2 nha",
+            done: false,
+            author: "userName",
+          },
+        ],
+        members: [
+          {
+            name: "userName",
+            role: "admin",
+          },
+          {
+            name: "userName2",
+            role: "user",
+          },
+        ],
+      },
+      {
+        projectsId: 259338538964,
+        tasks: [
+          {
+            task: "quetdas nha",
+            done: false,
+            author: "userName",
+          },
+        ],
+        members: [
+          {
+            name: "userName",
+            role: "admin",
+          },
+          {
+            name: "userName2",
+            role: "user",
+          },
+        ],
+      },
+    ];
+  }
+
+  const currentIdProject = JSON.parse(localStorage.getItem("currentIdProject"));
   let tasksArray = [];
+
+  projects.forEach((project) => {
+    if (project.projectsId === currentIdProject) {
+      tasksArray = project.tasks;
+    }
+  });
 
   let undoneTask = [];
   let doneTask = [];
@@ -132,6 +183,7 @@ function toDoApp() {
       undoneTask.push({
         task: taskInput.value,
         done: false,
+        author: loggedInAccount.userName,
       });
 
       taskInput.value = "";
@@ -198,14 +250,27 @@ function toDoApp() {
     }
   }
 
-  let currentAccount = JSON.parse(localStorage.getItem("loggedInAccount"));
-
-  // person["address"] = "123 Main Street";
-
-  // currentAccount = JSON.stringify(tasksArray);
-
-  // localStorage.setItem('loggedInAccount', JSON.stringify(currentAccount));
+  projects.push({
+    name: "Projects1",
+    projectsId: 0,
+    tasks: [
+      {
+        task: "quet2 nha",
+        done: false,
+        author: "userName",
+      },
+    ],
+    members: [
+      {
+        name: "userName",
+        role: "admin",
+      },
+      {
+        name: "userName2",
+        role: "user",
+      },
+    ],
+  });
 }
-
 
 toDoApp();

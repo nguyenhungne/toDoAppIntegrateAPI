@@ -110,6 +110,8 @@ function projects() {
   let undoneProjects = [];
   let doneProjects = [];
 
+  let projects = JSON.parse(localStorage.getItem("projects"));
+
   projectsArray.forEach((project) => {
     if (project.done === false) {
       undoneProjects.push(project);
@@ -124,12 +126,12 @@ function projects() {
   //handle add task
   addButton.addEventListener("click", addTask);
 
-
   function addTask() {
-      
+    let id = Math.floor(Math.random() * Date.now());
+
     if ((taskInput.value != "") | taskInput.value.trim()) {
       undoneProjects.push({
-        id: Math.floor(Math.random() * Date.now()),
+        id: id,
         project: taskInput.value,
         done: false,
       });
@@ -140,8 +142,27 @@ function projects() {
       filterInput.value = "UNDONE";
       select();
       handleUpdate();
-    }
 
+      if (projects.length == 0) {
+        projects.push({
+          projectsId: id,
+          tasks: [],
+          members: [
+            {
+              name: loggedInAccount.userName,
+              role: "admin",
+            },
+          ],
+        });
+      } else {
+        projects = [...projects];
+        projects.push({
+          projectsId: id,
+          tasks: [],
+          members: [],
+        });
+      }
+    }
   }
 
   function select() {
@@ -151,26 +172,32 @@ function projects() {
       detailButton[i].addEventListener("click", accessToDetail);
 
       function accessToDetail(e) {
-        localStorage.setItem("currentIdProject", loggedInAccount.projects[i].id);
+        localStorage.setItem(
+          "currentIdProject",
+          loggedInAccount.projects[i].id
+        );
 
-
-        window.location.replace("../htmls/toDoApp.html")
+        window.location.replace("../htmls/toDoApp.html");
       }
     }
 
-
     //handle delete task:
     const deleteButton = document.querySelectorAll(".delete-button");
-    
+
     for (let i = 0; i < deleteButton.length; i++) {
       deleteButton[i].addEventListener("click", handleDelete);
 
       function handleDelete() {
         undoneProjects.splice(i, 1);
+        projects.splice(i, 1);
         renderProjects(undoneProjects);
         select();
         handleUpdate();
+
+        localStorage.setItem("projects", JSON.stringify(projects));
       }
+
+      localStorage.setItem("projects", JSON.stringify(projects));
     }
 
     const checkBoxDone = document.querySelectorAll(".to-do-done");
@@ -209,7 +236,6 @@ function projects() {
 
   Accounts.forEach(function (account, index, array) {
     if (account.userName === loggedInAccount.userName) {
-      console.log(account);
       array.splice(index, 1, loggedInAccount);
       localStorage.setItem("Accounts", JSON.stringify(array));
     }

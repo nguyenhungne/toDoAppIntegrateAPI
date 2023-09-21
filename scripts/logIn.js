@@ -36,7 +36,7 @@ function logIn() {
         //     sessionStorage.setItem('loggedInAccount', JSON.stringify(loggedInAccount));
         // }
 
-        localStorage.setItem("currentProject", '[]');
+        localStorage.setItem("projects", '[]');
 
         Redirect();
         return;
