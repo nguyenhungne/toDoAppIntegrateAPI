@@ -19,8 +19,6 @@ function toDoApp() {
 
   let loggedInAccount = JSON.parse(localStorage.getItem("loggedInAccount"));
 
-  console.log();
-
   const headerToDo = document.querySelector(".to-do-app-header");
   const welcomeUserParagraph = document.createElement("p");
   welcomeUserParagraph.classList.add("wellcome-user");
@@ -211,5 +209,6 @@ function toDoApp() {
 
   // localStorage.setItem('loggedInAccount', JSON.stringify(currentAccount));
 }
+
 
 toDoApp();

@@ -36,6 +36,8 @@ function logIn() {
         //     sessionStorage.setItem('loggedInAccount', JSON.stringify(loggedInAccount));
         // }
 
+        localStorage.setItem("currentProjects", '[]');
+
         Redirect();
         return;
       } else {
@@ -73,6 +75,6 @@ const checkLogIn = () => {
   let loggedInAccount = JSON.parse(localStorage.getItem("loggedInAccount"));
 
   if (!(loggedInAccount === null)) {
-    setTimeout(window.location.replace("./toDoApp.html"), 2000);
+    setTimeout(window.location.replace("../htmls/projects.html"), 2000);
   }
 };

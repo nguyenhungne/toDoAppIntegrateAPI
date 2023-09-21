@@ -10,7 +10,7 @@ const checkLogIn = () => {
   }
 };
 
-function toDoApp() {
+function projects() {
   const taskInput = document.querySelector(".task-input");
   const addButton = document.querySelector(".add-button");
   const cancelButton = document.querySelector(".cancel-button");
@@ -21,7 +21,7 @@ function toDoApp() {
   const headerToDo = document.querySelector(".to-do-app-header");
   const welcomeUserParagraph = document.createElement("p");
   welcomeUserParagraph.classList.add("wellcome-user");
-  welcomeUserParagraph.textContent = `Well come ${loggedInAccount.userName} to ToDoApp 4.0`;
+  welcomeUserParagraph.textContent = `Well come ${loggedInAccount.userName} to projects 4.0`;
 
   headerToDo.appendChild(welcomeUserParagraph);
 
@@ -86,9 +86,9 @@ function toDoApp() {
       taskP.classList.add("task");
       taskP.textContent = `${element.project}`;
 
-      const SelectButton = document.createElement("button");
-      SelectButton.classList.add("select-button", "button-handle");
-      SelectButton.textContent = "Detail";
+      const detailButton = document.createElement("button");
+      detailButton.classList.add("select-button", "button-handle");
+      detailButton.textContent = "Detail";
 
       const deleteButton = document.createElement("button");
       deleteButton.classList.add("delete-button", "button-handle");
@@ -96,7 +96,7 @@ function toDoApp() {
 
       toDoContent.appendChild(checkDone);
       toDoContent.appendChild(taskP);
-      toDoContent.appendChild(SelectButton);
+      toDoContent.appendChild(detailButton);
       toDoContent.appendChild(deleteButton);
 
       const taskContent = document.querySelector(".task-content");
@@ -150,29 +150,38 @@ function toDoApp() {
   }
 
   function select() {
-    const SelectButton = document.querySelectorAll(".select-button");
+    const detailButton = document.querySelectorAll(".select-button");
 
-    //handle select task
-    for (let i = 0; i < SelectButton.length; i++) {
-      SelectButton[i].addEventListener("click", handleEdit);
+    //handle detail projects
 
-      function handleEdit(e) {
-        const checkboxToDo =
-          e.target.parentElement.querySelector(".to-do-done");
+    console.log(); 
 
-        if (checkboxToDo.hasAttribute("checked", "checked")) {
-          checkboxToDo.removeAttribute("checked", "checked");
-        } else {
-          checkboxToDo.setAttribute("checked", "checked");
-        }
+    for (let i = 0; i < loggedInAccount.projects.length ; i++) {
+        let id = loggedInAccount.projects[i].id;
+        detailButton[id-1].addEventListener("click", accessToDetail);
 
-        window.location.replace("../htmls/toDoApp.html");
-      }
+        function accessToDetail() {
+          localStorage.setItem("currentIdProject", id);
+          window.location.replace("../htmls/toDoApp.html")
+        } 
+
     }
+    
+
+
+
+    // for (let i = 0; i < detailButton.length; i++) {
+    //   detailButton[i].addEventListener("click", accessToDetail);
+
+    //   function accessToDetail(e) {
+    //     console.log(i);
+    //   }
+    // }
+
 
     //handle delete task:
     const deleteButton = document.querySelectorAll(".delete-button");
-
+    
     for (let i = 0; i < deleteButton.length; i++) {
       deleteButton[i].addEventListener("click", handleDelete);
 
@@ -227,4 +236,4 @@ function toDoApp() {
   });
 }
 
-toDoApp();
+projects();
