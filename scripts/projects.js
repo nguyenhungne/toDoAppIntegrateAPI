@@ -151,6 +151,9 @@ function projects() {
       detailButton[i].addEventListener("click", accessToDetail);
 
       function accessToDetail(e) {
+        localStorage.setItem("currentIdProject", loggedInAccount.projects[i].id);
+
+
         window.location.replace("../htmls/toDoApp.html")
       }
     }
