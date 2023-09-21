@@ -106,12 +106,9 @@ function toDoApp() {
     });
   }
 
-  let tasksArray = [
-    {
-      task: "task",
-      done: false,
-    },
-  ];
+  
+
+  let tasksArray = [];
 
   let undoneTask = [];
   let doneTask = [];

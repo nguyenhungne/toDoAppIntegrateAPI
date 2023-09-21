@@ -123,19 +123,13 @@ function projects() {
 
   //handle add task
   addButton.addEventListener("click", addTask);
-  let id =0;
-  if (loggedInAccount.projects == []) {
-    id =0;
-  } else {
-    id = loggedInAccount.projects[loggedInAccount.projects.length -1].id;
-  }
+
 
   function addTask() {
-    id += 1;
-
+      
     if ((taskInput.value != "") | taskInput.value.trim()) {
       undoneProjects.push({
-        id: id,
+        id: Math.floor(Math.random() * Date.now()),
         project: taskInput.value,
         done: false,
       });
@@ -147,36 +141,19 @@ function projects() {
       select();
       handleUpdate();
     }
+
   }
 
   function select() {
     const detailButton = document.querySelectorAll(".select-button");
 
-    //handle detail projects
+    for (let i = 0; i < detailButton.length; i++) {
+      detailButton[i].addEventListener("click", accessToDetail);
 
-    console.log(); 
-
-    for (let i = 0; i < loggedInAccount.projects.length ; i++) {
-        let id = loggedInAccount.projects[i].id;
-        detailButton[id-1].addEventListener("click", accessToDetail);
-
-        function accessToDetail() {
-          localStorage.setItem("currentIdProject", id);
-          window.location.replace("../htmls/toDoApp.html")
-        } 
-
+      function accessToDetail(e) {
+        window.location.replace("../htmls/toDoApp.html")
+      }
     }
-    
-
-
-
-    // for (let i = 0; i < detailButton.length; i++) {
-    //   detailButton[i].addEventListener("click", accessToDetail);
-
-    //   function accessToDetail(e) {
-    //     console.log(i);
-    //   }
-    // }
 
 
     //handle delete task:

@@ -1,5 +1,5 @@
 function Redirect() {
-  window.location.replace("./toDoApp.html");
+  window.location.replace("../htmls/projects.html");
 }
 
 function logIn() {
@@ -36,7 +36,7 @@ function logIn() {
         //     sessionStorage.setItem('loggedInAccount', JSON.stringify(loggedInAccount));
         // }
 
-        localStorage.setItem("currentProjects", '[]');
+        localStorage.setItem("currentProject", '[]');
 
         Redirect();
         return;
