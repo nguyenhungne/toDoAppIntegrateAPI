@@ -36,7 +36,6 @@ function toDoApp() {
   cancelButton.addEventListener("click", handleCancel);
 
   function handleCancel() {
-    //    const toDoHandle = document.querySelector('.to-do-handle');
     taskInput.value = "";
     taskInput.focus();
   }
@@ -106,52 +105,6 @@ function toDoApp() {
 
   let projects = JSON.parse(localStorage.getItem("projects"));
 
-  if (projects.length > 0) {
-  } else {
-    projects = [
-      {
-        projectsId: 0,
-        tasks: [
-          {
-            task: "quet2 nha",
-            done: false,
-            author: "userName",
-          },
-        ],
-        members: [
-          {
-            name: "userName",
-            role: "admin",
-          },
-          {
-            name: "userName2",
-            role: "user",
-          },
-        ],
-      },
-      {
-        projectsId: 259338538964,
-        tasks: [
-          {
-            task: "quetdas nha",
-            done: false,
-            author: "userName",
-          },
-        ],
-        members: [
-          {
-            name: "userName",
-            role: "admin",
-          },
-          {
-            name: "userName2",
-            role: "user",
-          },
-        ],
-      },
-    ];
-  }
-
   const currentIdProject = JSON.parse(localStorage.getItem("currentIdProject"));
   let tasksArray = [];
 
@@ -191,6 +144,7 @@ function toDoApp() {
       renderTask(undoneTask);
       filterInput.value = "UNDONE";
       select();
+      handleUpdate();
     }
   }
 
@@ -220,6 +174,7 @@ function toDoApp() {
         undoneTask.splice(i, 1);
         renderTask(undoneTask);
         select();
+        handleUpdate ()
       }
     }
 
@@ -250,27 +205,15 @@ function toDoApp() {
     }
   }
 
-  projects.push({
-    name: "Projects1",
-    projectsId: 0,
-    tasks: [
-      {
-        task: "quet2 nha",
-        done: false,
-        author: "userName",
-      },
-    ],
-    members: [
-      {
-        name: "userName",
-        role: "admin",
-      },
-      {
-        name: "userName2",
-        role: "user",
-      },
-    ],
-  });
+  function handleUpdate () {
+    projects.forEach((project) => {
+      if (project.projectsId === currentIdProject) {
+        project.tasks = (undoneTask.concat(doneTask));
+        console.log(project.tasks);
+      }
+    });
+    localStorage.setItem("projects",JSON.stringify(projects));
+  }
 }
 
 toDoApp();

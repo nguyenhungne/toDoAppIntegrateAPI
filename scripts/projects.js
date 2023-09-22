@@ -141,7 +141,6 @@ function projects() {
       renderProjects(undoneProjects);
       filterInput.value = "UNDONE";
       select();
-      handleUpdate();
 
       if (projects.length == 0) {
         projects.push({
@@ -159,10 +158,18 @@ function projects() {
         projects.push({
           projectsId: id,
           tasks: [],
-          members: [],
+          members: [
+            {
+              name: loggedInAccount.userName,
+              role: "admin",
+            },
+          ],
         });
       }
     }
+
+    handleUpdate();
+    localStorage.setItem("projects", JSON.stringify(projects));
   }
 
   function select() {
@@ -192,12 +199,10 @@ function projects() {
         projects.splice(i, 1);
         renderProjects(undoneProjects);
         select();
-        handleUpdate();
 
+        handleUpdate();
         localStorage.setItem("projects", JSON.stringify(projects));
       }
-
-      localStorage.setItem("projects", JSON.stringify(projects));
     }
 
     const checkBoxDone = document.querySelectorAll(".to-do-done");
