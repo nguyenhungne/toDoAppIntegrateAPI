@@ -10,10 +10,25 @@ const checkLogIn = () => {
   }
 };
 
-function toDoApp() {
+async function fetchAsync() {
+  let response = await fetch("http://127.0.0.1:8000/tasks");
+  let data = await response.json();
+  return data;
+}
+
+fetchAsync()
+  .then((data) => toDoApp(data))
+  .catch((reason) => console.log(reason.message));
+
+function toDoApp(tasks) {
   const taskInput = document.querySelector(".task-input");
   const addButton = document.querySelector(".add-button");
   const cancelButton = document.querySelector(".cancel-button");
+
+  //get projects id
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const projectId = parseInt(urlParams.get("id"));
 
   let loggedInAccount = JSON.parse(localStorage.getItem("loggedInAccount"));
 
@@ -35,6 +50,15 @@ function toDoApp() {
 
   cancelButton.addEventListener("click", handleCancel);
 
+  function updateDataBase(path, data, method) {
+    return fetch(path, {
+      method: method,
+      mode: "cors",
+      credentials: "same-origin",
+      body: JSON.stringify(data),
+    });
+  }
+
   function handleCancel() {
     taskInput.value = "";
     taskInput.focus();
@@ -51,6 +75,7 @@ function toDoApp() {
     tasks.forEach((element) => {
       const toDoContent = document.createElement("div");
       toDoContent.classList.add("to-do-content");
+      toDoContent.dataset.id = element.id;
 
       const doneMessage = document.createElement("p");
       doneMessage.classList.add("done-message");
@@ -75,6 +100,7 @@ function toDoApp() {
     tasks.forEach((element) => {
       const toDoContent = document.createElement("div");
       toDoContent.classList.add("to-do-content");
+      toDoContent.dataset.id = element.id;
 
       const checkDone = document.createElement("input");
       checkDone.classList.add("to-do-done");
@@ -103,48 +129,45 @@ function toDoApp() {
     });
   }
 
-  let projects = JSON.parse(localStorage.getItem("projects"));
-
-  const currentIdProject = JSON.parse(localStorage.getItem("currentIdProject"));
   let tasksArray = [];
-
-  projects.forEach((project) => {
-    if (project.projectsId === currentIdProject) {
-      tasksArray = project.tasks;
+  tasks.forEach((task) => {
+    if (task.projectId === parseInt(projectId)) {
+      tasksArray.push(task);
     }
   });
 
-  let undoneTask = [];
-  let doneTask = [];
-
+  let undoneTasks = [];
+  let doneTasks = [];
   tasksArray.forEach((task) => {
     if (task.done === false) {
-      undoneTask.push(task);
+      undoneTasks.push(task);
     } else if (task.done === true) {
-      doneTask.push(task);
+      doneTasks.push(task);
     }
   });
-
-  renderTask(undoneTask);
+  renderTask(undoneTasks);
   select();
 
   //handle add task
   addButton.addEventListener("click", addTask);
 
   function addTask() {
+    let id = Math.floor(Math.random() * Date.now());
     if ((taskInput.value != "") | taskInput.value.trim()) {
-      undoneTask.push({
+      // new task to add to database
+      const newTask = {
+        id: parseInt(id),
+        projectId: projectId,
         task: taskInput.value,
         done: false,
         author: loggedInAccount.userName,
-      });
-
+      };
       taskInput.value = "";
       taskInput.focus();
-      renderTask(undoneTask);
+      renderTask(undoneTasks);
       filterInput.value = "UNDONE";
       select();
-      handleUpdate();
+      updateDataBase("http://127.0.0.1:8000/tasks", newTask, "POST");
     }
   }
 
@@ -158,38 +181,47 @@ function toDoApp() {
       function handleEdit() {
         taskInput.value = "";
         taskInput.focus();
-        undoneTask.splice(i, 1);
-        renderTask(undoneTask);
+        undoneTasks.splice(i, 1);
+        renderTask(undoneTasks);
         select();
       }
     }
 
     //handle delete task:
-    const deleteButton = document.querySelectorAll(".delete-button");
+    let deleteButtons = document.querySelectorAll(".delete-button");
 
-    for (let i = 0; i < deleteButton.length; i++) {
-      deleteButton[i].addEventListener("click", handleDelete);
+    deleteButtons = Array.from(deleteButtons);
 
+    deleteButtons.forEach((deleteButton) => {
+      deleteButton.addEventListener("click", handleDelete);
       function handleDelete() {
-        undoneTask.splice(i, 1);
-        renderTask(undoneTask);
-        select();
-        handleUpdate ()
+        const id = deleteButton.parentElement.dataset.id;
+        path = `http://127.0.0.1:8000/tasks/${id}`;
+        updateDataBase(path, null, "DELETE");
       }
-    }
+      
 
-    const checkBoxDone = document.querySelectorAll(".to-do-done");
+        
+    })
 
-    for (let i = 0; i < undoneTask.length; i++) {
-      checkBoxDone[i].addEventListener("change", handleChecked);
+    let checkBoxDone = document.querySelectorAll(".to-do-done");
+
+    checkBoxDone = Array.from(checkBoxDone);
+
+    checkBoxDone.forEach((checkBox) => {
+      checkBox.addEventListener("change", handleChecked);
       function handleChecked() {
-        undoneTask[i].done = true;
-        doneTask.push(undoneTask[i]);
-        undoneTask.splice(i, 1);
-        renderTask(undoneTask);
-        select();
+        const id = checkBox.parentElement.dataset.id;
+        path = `http://127.0.0.1:8000/tasks/${id}`;
+        const i = undoneTasks.findIndex(
+          (task) => task.id === parseInt(id)
+        );
+        undoneTasks[i].done = true;
+        undoneTasks.push(undoneTasks[i]);
+        updateDataBase(path, undoneTasks[i], "PATCH");
+        undoneTasks.splice(i, 1);
       }
-    }
+    });
   }
 
   const filterInput = document.getElementById("filter-options");
@@ -197,23 +229,11 @@ function toDoApp() {
 
   function filterInputHandler() {
     if (filterInput.value === "DONE") {
-      renderTaskDone(doneTask);
+      renderTaskDone(doneTasks);
       select();
     } else if (filterInput.value === "UNDONE") {
-      renderTask(undoneTask);
+      renderTask(undoneTasks);
       select();
     }
   }
-
-  function handleUpdate () {
-    projects.forEach((project) => {
-      if (project.projectsId === currentIdProject) {
-        project.tasks = (undoneTask.concat(doneTask));
-        console.log(project.tasks);
-      }
-    });
-    localStorage.setItem("projects",JSON.stringify(projects));
-  }
 }
-
-toDoApp();

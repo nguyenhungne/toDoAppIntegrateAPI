@@ -15,8 +15,6 @@ entity "Account" as Account {
 entity "Project" as Project {
     *Id: number <<generated>>
     --
-    taskId: number
-    --
     isDone: boolean
 }
 

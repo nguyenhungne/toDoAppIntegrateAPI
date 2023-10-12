@@ -172,6 +172,7 @@ function submit(e) {
   if (Accounts === null) {
     if (validCheck) {
       accountsList.push({
+        id:Math.floor(Date.now()*Math.random()),
         email: email.value,
         userName: userName.value,
         password: password.value,

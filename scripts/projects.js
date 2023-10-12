@@ -10,7 +10,17 @@ const checkLogIn = () => {
   }
 };
 
-function projects() {
+async function fetchAsync() {
+  let response = await fetch("http://127.0.0.1:8000/projects");
+  let data = await response.json();
+  return data;
+}
+
+fetchAsync()
+  .then((data) => projects(data))
+  .catch((reason) => console.log(reason.message));
+
+function projects(projects) {
   const taskInput = document.querySelector(".task-input");
   const addButton = document.querySelector(".add-button");
   const cancelButton = document.querySelector(".cancel-button");
@@ -36,6 +46,15 @@ function projects() {
 
   cancelButton.addEventListener("click", handleCancel);
 
+  function updateDataBase(path, data, method) {
+    return fetch(path, {
+      method: method,
+      mode: "cors",
+      credentials: "same-origin",
+      body: JSON.stringify(data),
+    });
+  }
+
   function handleCancel() {
     //    const toDoHandle = document.querySelector('.to-do-handle');
     taskInput.value = "";
@@ -53,6 +72,7 @@ function projects() {
     projects.forEach((element) => {
       const toDoContent = document.createElement("div");
       toDoContent.classList.add("to-do-content");
+      toDoContent.dataset.id = element.id;
 
       const doneMessage = document.createElement("p");
       doneMessage.classList.add("done-message");
@@ -77,6 +97,7 @@ function projects() {
     projects.forEach((element) => {
       const toDoContent = document.createElement("div");
       toDoContent.classList.add("to-do-content");
+      toDoContent.dataset.id = element.id;
 
       const checkDone = document.createElement("input");
       checkDone.classList.add("to-do-done");
@@ -105,12 +126,12 @@ function projects() {
     });
   }
 
-  let projectsArray = loggedInAccount.projects;
+  let projectsArray = projects;
 
   let undoneProjects = [];
   let doneProjects = [];
 
-  let projects = JSON.parse(localStorage.getItem("projects"));
+  // let projects = JSON.parse(localStorage.getItem("projects"));
 
   projectsArray.forEach((project) => {
     if (project.done === false) {
@@ -124,100 +145,70 @@ function projects() {
   select();
 
   //handle add task
-  addButton.addEventListener("click", addTask);
+  addButton.addEventListener("click", addProject);
 
-  function addTask() {
+  function addProject() {
     let id = Math.floor(Math.random() * Date.now());
-
     if ((taskInput.value != "") | taskInput.value.trim()) {
-      undoneProjects.push({
+      // new project to add to database
+      const newProject = {
         id: id,
         project: taskInput.value,
         done: false,
-      });
+      };
 
       taskInput.value = "";
       taskInput.focus();
       renderProjects(undoneProjects);
       filterInput.value = "UNDONE";
       select();
+      updateDataBase("http://127.0.0.1:8000/projects", newProject, "POST");
 
-      if (projects.length == 0) {
-        projects.push({
-          projectsId: id,
-          tasks: [],
-          members: [
-            {
-              name: loggedInAccount.userName,
-              role: "admin",
-            },
-          ],
-        });
-      } else {
-        projects = [...projects];
-        projects.push({
-          projectsId: id,
-          tasks: [],
-          members: [
-            {
-              name: loggedInAccount.userName,
-              role: "admin",
-            },
-          ],
-        });
-      }
     }
-
-    handleUpdate();
-    localStorage.setItem("projects", JSON.stringify(projects));
   }
 
   function select() {
-    const detailButton = document.querySelectorAll(".select-button");
-
-    for (let i = 0; i < detailButton.length; i++) {
-      detailButton[i].addEventListener("click", accessToDetail);
-
-      function accessToDetail(e) {
-        localStorage.setItem(
-          "currentIdProject",
-          loggedInAccount.projects[i].id
-        );
-
-        window.location.replace("../htmls/toDoApp.html");
+    let detailButtons = document.querySelectorAll(".select-button");
+    detailButtons = Array.from(detailButtons);
+    detailButtons.forEach((detailButton) => {
+      detailButton.addEventListener("click",accessToDetail)
+      function accessToDetail (){
+        id = detailButton.parentElement.dataset.id;
+        window.location.replace(`../htmls/toDoApp.html?id=${id}`);
       }
-    }
+    });
 
     //handle delete task:
-    const deleteButton = document.querySelectorAll(".delete-button");
+    let deleteButtons = document.querySelectorAll(".delete-button");
+    deleteButtons = Array.from(deleteButtons);
 
-    for (let i = 0; i < deleteButton.length; i++) {
-      deleteButton[i].addEventListener("click", handleDelete);
+    deleteButtons.forEach((deleteButton) => {
+      deleteButton.addEventListener("click", handleDelete);
 
       function handleDelete() {
-        undoneProjects.splice(i, 1);
-        projects.splice(i, 1);
-        renderProjects(undoneProjects);
-        select();
-
-        handleUpdate();
-        localStorage.setItem("projects", JSON.stringify(projects));
+        const id = deleteButton.parentElement.dataset.id;
+        path = `http://127.0.0.1:8000/projects/${id}`;
+        updateDataBase(path, null, "DELETE");
       }
-    }
+    });
 
-    const checkBoxDone = document.querySelectorAll(".to-do-done");
+    let checkBoxDone = document.querySelectorAll(".to-do-done");
+    checkBoxDone = Array.from(checkBoxDone);
 
-    for (let i = 0; i < undoneProjects.length; i++) {
-      checkBoxDone[i].addEventListener("change", handleChecked);
+    checkBoxDone.forEach((checkBox) => {
+      checkBox.addEventListener("change", handleChecked);
       function handleChecked() {
+        const id = checkBox.parentElement.dataset.id;
+        path = `http://127.0.0.1:8000/projects/${id}`;
+        const i = undoneProjects.findIndex(
+          (project) => project.id === parseInt(id)
+        );
         undoneProjects[i].done = true;
         doneProjects.push(undoneProjects[i]);
+        updateDataBase(path, undoneProjects[i], "PATCH");
         undoneProjects.splice(i, 1);
-        renderProjects(undoneProjects);
-        select();
-        handleUpdate();
       }
-    }
+    });
   }
 
   const filterInput = document.getElementById("filter-options");
@@ -233,12 +224,6 @@ function projects() {
     }
   }
 
-  function handleUpdate() {
-    let currentAccount = JSON.parse(localStorage.getItem("loggedInAccount"));
-    currentAccount.projects = doneProjects.concat(undoneProjects);
-    localStorage.setItem("loggedInAccount", JSON.stringify(currentAccount));
-  }
-
   Accounts.forEach(function (account, index, array) {
     if (account.userName === loggedInAccount.userName) {
       array.splice(index, 1, loggedInAccount);
@@ -246,5 +231,3 @@ function projects() {
     }
   });
 }
-
-projects();
