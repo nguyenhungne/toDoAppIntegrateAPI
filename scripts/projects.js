@@ -56,7 +56,6 @@ function projects(projects) {
   }
 
   function handleCancel() {
-    //    const toDoHandle = document.querySelector('.to-do-handle');
     taskInput.value = "";
     taskInput.focus();
   }
@@ -131,8 +130,6 @@ function projects(projects) {
   let undoneProjects = [];
   let doneProjects = [];
 
-  // let projects = JSON.parse(localStorage.getItem("projects"));
-
   projectsArray.forEach((project) => {
     if (project.done === false) {
       undoneProjects.push(project);
@@ -142,12 +139,11 @@ function projects(projects) {
   });
 
   renderProjects(undoneProjects);
-  select();
 
   //handle add task
   addButton.addEventListener("click", addProject);
 
-  function addProject() {
+  async function addProject() {
     let id = Math.floor(Math.random() * Date.now());
     if ((taskInput.value != "") | taskInput.value.trim()) {
       // new project to add to database
@@ -159,69 +155,129 @@ function projects(projects) {
 
       taskInput.value = "";
       taskInput.focus();
-      renderProjects(undoneProjects);
       filterInput.value = "UNDONE";
-      select();
-      updateDataBase("http://127.0.0.1:8000/projects", newProject, "POST");
-
+      await updateDataBase(
+        "http://127.0.0.1:8000/projects",
+        newProject,
+        "POST"
+      );
+      await fetchAsync()
+        .then((data) => {
+          let projectsArray = data;
+          let undoneProjects = [];
+          let doneProjects = [];
+          projectsArray.forEach((project) => {
+            if (project.done === false) {
+              undoneProjects.push(project);
+            } else if (project.done === true) {
+              doneProjects.push(project);
+            }
+          });
+          return undoneProjects;
+        })
+        .then((data) => renderProjects(data))
+        .catch((reason) => console.log(reason.message));
     }
   }
 
-  function select() {
-    let detailButtons = document.querySelectorAll(".select-button");
-    detailButtons = Array.from(detailButtons);
-    detailButtons.forEach((detailButton) => {
-      detailButton.addEventListener("click",accessToDetail)
-      function accessToDetail (){
-        id = detailButton.parentElement.dataset.id;
-        window.location.replace(`../htmls/toDoApp.html?id=${id}`);
-      }
-    });
+  let containerTodo = document.querySelector(".task-content");
+  containerTodo.addEventListener("click", function (event) {
+    if (event.target && event.target.classList.contains("delete-button")) {
+      handleDelete(event.target);
+    }
 
-    //handle delete task:
-    let deleteButtons = document.querySelectorAll(".delete-button");
-    deleteButtons = Array.from(deleteButtons);
+    if (event.target && event.target.classList.contains("select-button")) {
+      accessToDetail(event.target);
+    }
 
-    deleteButtons.forEach((deleteButton) => {
-      deleteButton.addEventListener("click", handleDelete);
+    if (event.target && event.target.classList.contains("to-do-done")) {
+      handleChecked(event.target);
+    }
+  });
 
-      function handleDelete() {
-        const id = deleteButton.parentElement.dataset.id;
-        path = `http://127.0.0.1:8000/projects/${id}`;
-        updateDataBase(path, null, "DELETE");
-      }
-    });
+  //handle detail project
+  function accessToDetail(detailButton) {
+    id = detailButton.parentElement.dataset.id;
+    window.location.replace(`../htmls/toDoApp.html?id=${id}`);
+  }
 
-    let checkBoxDone = document.querySelectorAll(".to-do-done");
-    checkBoxDone = Array.from(checkBoxDone);
+  //handle delete project:
+  async function handleDelete(deleteButton) {
+    const id = await deleteButton.parentElement.dataset.id;
+    path = await `http://127.0.0.1:8000/projects/${id}`;
+    await updateDataBase(path, null, "DELETE");
+    await fetchAsync()
+      .then((data) => {
+        let projectsArray = data;
+        let undoneProjects = [];
+        let doneProjects = [];
+        projectsArray.forEach((project) => {
+          if (project.done === false) {
+            undoneProjects.push(project);
+          } else if (project.done === true) {
+            doneProjects.push(project);
+          }
+        });
+        return undoneProjects;
+      })
+      .then((data) => renderProjects(data))
+      .catch((reason) => console.log(reason.message));
+  }
 
-    checkBoxDone.forEach((checkBox) => {
-      checkBox.addEventListener("change", handleChecked);
-      function handleChecked() {
+  //handle isDone
+  async function handleChecked(checkBox) {
+    await fetchAsync()
+      .then((data) =>{
+        let projectsArray = data;
+        let undoneProjects = [];
+        let doneProjects = [];
+        projectsArray.forEach((project) => {
+          if (project.done === false) {
+            undoneProjects.push(project);
+          } else if (project.done === true) {
+            doneProjects.push(project);
+          }
+        });
+
         const id = checkBox.parentElement.dataset.id;
         path = `http://127.0.0.1:8000/projects/${id}`;
         const i = undoneProjects.findIndex(
-          (project) => project.id === parseInt(id)
-        );
+            (project) => project.id === parseInt(id)
+          );
         undoneProjects[i].done = true;
-        doneProjects.push(undoneProjects[i]);
         updateDataBase(path, undoneProjects[i], "PATCH");
         undoneProjects.splice(i, 1);
-      }
-    });
+        renderProjects(undoneProjects);
+      })
+      .catch((reason) => console.log(reason.message));
   }
 
   const filterInput = document.getElementById("filter-options");
   filterInput.addEventListener("change", filterInputHandler);
 
-  function filterInputHandler() {
-    if (filterInput.value === "DONE") {
-      renderProjectsDone(doneProjects);
-      select();
-    } else if (filterInput.value === "UNDONE") {
-      renderProjects(undoneProjects);
-      select();
-    }
+  async function filterInputHandler() {
+    await fetchAsync()
+        .then((data) => {
+          let projectsArray = data;
+          let undoneProjects = [];
+          let doneProjects = [];
+          projectsArray.forEach((project) => {
+            if (project.done === false) {
+              undoneProjects.push(project);
+            } else if (project.done === true) {
+              doneProjects.push(project);
+            }
+          });
+          if (filterInput.value === "DONE") {
+            renderProjectsDone(doneProjects)
+          }
+
+          if (filterInput.value === "UNDONE") {
+            renderProjects(undoneProjects)
+          }
+
+        })
+        .catch((reason) => console.log(reason.message));
   }
 
   Accounts.forEach(function (account, index, array) {

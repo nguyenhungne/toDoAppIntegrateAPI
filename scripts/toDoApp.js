@@ -146,12 +146,11 @@ function toDoApp(tasks) {
     }
   });
   renderTask(undoneTasks);
-  select();
 
   //handle add task
   addButton.addEventListener("click", addTask);
 
-  function addTask() {
+  async function addTask() {
     let id = Math.floor(Math.random() * Date.now());
     if ((taskInput.value != "") | taskInput.value.trim()) {
       // new task to add to database
@@ -164,76 +163,171 @@ function toDoApp(tasks) {
       };
       taskInput.value = "";
       taskInput.focus();
-      renderTask(undoneTasks);
       filterInput.value = "UNDONE";
-      select();
       updateDataBase("http://127.0.0.1:8000/tasks", newTask, "POST");
+
+      await fetchAsync()
+        .then((tasks) => {
+          let tasksArray = [];
+          tasks.forEach((task) => {
+            if (task.projectId === parseInt(projectId)) {
+              tasksArray.push(task);
+            }
+          });
+
+          let undoneTasks = [];
+          let doneTasks = [];
+          tasksArray.forEach((task) => {
+            if (task.done === false) {
+              undoneTasks.push(task);
+            } else if (task.done === true) {
+              doneTasks.push(task);
+            }
+          });
+
+          return undoneTasks;
+        })
+        .then((data) => renderTask(data))
+        .catch((reason) => console.log(reason.message));
     }
   }
 
-  function select() {
-    const editButton = document.querySelectorAll(".edit-button");
-
-    //handle edit task
-    for (let i = 0; i < editButton.length; i++) {
-      editButton[i].addEventListener("click", handleEdit);
-
-      function handleEdit() {
-        taskInput.value = "";
-        taskInput.focus();
-        undoneTasks.splice(i, 1);
-        renderTask(undoneTasks);
-        select();
-      }
+  let containerTodo = document.querySelector(".task-content");
+  containerTodo.addEventListener("click", function (event) {
+    if (event.target && event.target.classList.contains("delete-button")) {
+      handleDelete(event.target);
     }
 
-    //handle delete task:
-    let deleteButtons = document.querySelectorAll(".delete-button");
+    if (event.target && event.target.classList.contains("to-do-done")) {
+      handleChecked(event.target);
+    }
 
-    deleteButtons = Array.from(deleteButtons);
+    if (event.target && event.target.classList.contains("edit-button")) {
+      handleEdit(event.target);
+    }
+  });
 
-    deleteButtons.forEach((deleteButton) => {
-      deleteButton.addEventListener("click", handleDelete);
-      function handleDelete() {
-        const id = deleteButton.parentElement.dataset.id;
-        path = `http://127.0.0.1:8000/tasks/${id}`;
-        updateDataBase(path, null, "DELETE");
-      }
-      
+  //handle edit task
 
-        
-    })
+  async function handleEdit(editButton) {
+    taskInput.value = "";
+    taskInput.focus();
 
-    let checkBoxDone = document.querySelectorAll(".to-do-done");
+    const id = await editButton.parentElement.dataset.id;
+    path = await `http://127.0.0.1:8000/tasks/${id}`;
+    await updateDataBase(path, null, "DELETE");
+    await fetchAsync()
+      .then((tasks) => {
+        let tasksArray = [];
+        tasks.forEach((task) => {
+          if (task.projectId === parseInt(projectId)) {
+            tasksArray.push(task);
+          }
+        });
+        let undoneTasks = [];
+        let doneTasks = [];
+        tasksArray.forEach((task) => {
+          if (task.done === false) {
+            undoneTasks.push(task);
+          } else if (task.done === true) {
+            doneTasks.push(task);
+          }
+        });
+        return undoneTasks;
+      })
+      .then((data) => renderTask(data))
+      .catch((reason) => console.log(reason.message));
+  }
 
-    checkBoxDone = Array.from(checkBoxDone);
+  //handle delete task:
+  async function handleDelete(deleteButton) {
+    const id = await deleteButton.parentElement.dataset.id;
+    path = await `http://127.0.0.1:8000/tasks/${id}`;
+    await updateDataBase(path, null, "DELETE");
+    await fetchAsync()
+      .then((tasks) => {
+        let tasksArray = [];
+        tasks.forEach((task) => {
+          if (task.projectId === parseInt(projectId)) {
+            tasksArray.push(task);
+          }
+        });
+        let undoneTasks = [];
+        let doneTasks = [];
+        tasksArray.forEach((task) => {
+          if (task.done === false) {
+            undoneTasks.push(task);
+          } else if (task.done === true) {
+            doneTasks.push(task);
+          }
+        });
+        return undoneTasks;
+      })
+      .then((data) => renderTask(data))
+      .catch((reason) => console.log(reason.message));
+  }
 
-    checkBoxDone.forEach((checkBox) => {
-      checkBox.addEventListener("change", handleChecked);
-      function handleChecked() {
-        const id = checkBox.parentElement.dataset.id;
-        path = `http://127.0.0.1:8000/tasks/${id}`;
-        const i = undoneTasks.findIndex(
-          (task) => task.id === parseInt(id)
-        );
-        undoneTasks[i].done = true;
-        undoneTasks.push(undoneTasks[i]);
-        updateDataBase(path, undoneTasks[i], "PATCH");
-        undoneTasks.splice(i, 1);
-      }
+  //handle is done
+  function handleChecked(checkBox) {
+    fetchAsync().then((tasks) => {
+      let tasksArray = [];
+      tasks.forEach((task) => {
+        if (task.projectId === parseInt(projectId)) {
+          tasksArray.push(task);
+        }
+      });
+
+      let undoneTasks = [];
+      let doneTasks = [];
+      tasksArray.forEach((task) => {
+        if (task.done === false) {
+          undoneTasks.push(task);
+        } else if (task.done === true) {
+          doneTasks.push(task);
+        }
+      });
+
+      const id = checkBox.parentElement.dataset.id;
+      path = `http://127.0.0.1:8000/tasks/${id}`;
+      const i = undoneTasks.findIndex((task) => task.id === parseInt(id));
+      undoneTasks[i].done = true;
+      updateDataBase(path, undoneTasks[i], "PATCH");
+      undoneTasks.splice(i, 1);
+      renderTask(undoneTasks);
     });
   }
 
   const filterInput = document.getElementById("filter-options");
   filterInput.addEventListener("change", filterInputHandler);
 
-  function filterInputHandler() {
-    if (filterInput.value === "DONE") {
-      renderTaskDone(doneTasks);
-      select();
-    } else if (filterInput.value === "UNDONE") {
-      renderTask(undoneTasks);
-      select();
-    }
+  async function filterInputHandler() {
+    await fetchAsync()
+      .then((tasks) => {
+        let tasksArray = [];
+        tasks.forEach((task) => {
+          if (task.projectId === parseInt(projectId)) {
+            tasksArray.push(task);
+          }
+        });
+
+        let undoneTasks = [];
+        let doneTasks = [];
+        tasksArray.forEach((task) => {
+          if (task.done === false) {
+            undoneTasks.push(task);
+          } else if (task.done === true) {
+            doneTasks.push(task);
+          }
+        });
+
+        if (filterInput.value === "DONE") {
+          renderTaskDone(doneTasks);
+        }
+
+        if (filterInput.value === "UNDONE") {
+          renderTask(undoneTasks);
+        }
+      })
+      .catch((reason) => console.log(reason.message));
   }
 }
