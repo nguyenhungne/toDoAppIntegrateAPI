@@ -3,22 +3,36 @@ function redirect() {
 }
 
 const checkLogIn = () => {
-  let loggedInAccount = JSON.parse(localStorage.getItem("loggedInAccount"));
+  let token = JSON.parse(localStorage.getItem("token"));
 
-  if (loggedInAccount === null) {
+  if (token === null) {
     redirect();
   }
 };
 
+//load data from database
 async function fetchAsync() {
   let response = await fetch("http://127.0.0.1:8000/projects");
   let data = await response.json();
   return data;
 }
-
 fetchAsync()
   .then((data) => projects(data))
   .catch((reason) => console.log(reason.message));
+
+  //update database
+  function updateDataBase(path, data, method, contentType = "application/json") {
+    return fetch(path, {
+      method: method,
+      mode: "cors",
+      credentials: "same-origin",
+      headers: {
+        // 'bearer': loggedInAccount.token,
+        'Content-Type': contentType,
+      },
+      body: JSON.stringify(data),
+    });
+  }
 
 function projects(projects) {
   const taskInput = document.querySelector(".task-input");
@@ -46,15 +60,6 @@ function projects(projects) {
 
   cancelButton.addEventListener("click", handleCancel);
 
-  function updateDataBase(path, data, method) {
-    return fetch(path, {
-      method: method,
-      mode: "cors",
-      credentials: "same-origin",
-      body: JSON.stringify(data),
-    });
-  }
-
   function handleCancel() {
     taskInput.value = "";
     taskInput.focus();
@@ -71,7 +76,7 @@ function projects(projects) {
     projects.forEach((element) => {
       const toDoContent = document.createElement("div");
       toDoContent.classList.add("to-do-content");
-      toDoContent.dataset.id = element.id;
+      toDoContent.dataset.id = element._id;
 
       const doneMessage = document.createElement("p");
       doneMessage.classList.add("done-message");
@@ -96,7 +101,7 @@ function projects(projects) {
     projects.forEach((element) => {
       const toDoContent = document.createElement("div");
       toDoContent.classList.add("to-do-content");
-      toDoContent.dataset.id = element.id;
+      toDoContent.dataset.id = element._id;
 
       const checkDone = document.createElement("input");
       checkDone.classList.add("to-do-done");
@@ -144,11 +149,9 @@ function projects(projects) {
   addButton.addEventListener("click", addProject);
 
   async function addProject() {
-    let id = Math.floor(Math.random() * Date.now());
     if ((taskInput.value != "") | taskInput.value.trim()) {
       // new project to add to database
-      const newProject = {
-        id: id,
+      let newProject = {
         project: taskInput.value,
         done: false,
       };
@@ -204,8 +207,9 @@ function projects(projects) {
   //handle delete project:
   async function handleDelete(deleteButton) {
     const id = await deleteButton.parentElement.dataset.id;
+    console.log(id);
     path = await `http://127.0.0.1:8000/projects/${id}`;
-    await updateDataBase(path, null, "DELETE");
+    await updateDataBase(path, null, "DELETE","text/plain");
     await fetchAsync()
       .then((data) => {
         let projectsArray = data;
@@ -242,10 +246,12 @@ function projects(projects) {
         const id = checkBox.parentElement.dataset.id;
         path = `http://127.0.0.1:8000/projects/${id}`;
         const i = undoneProjects.findIndex(
-            (project) => project.id === parseInt(id)
+            (project) => project._id == id
           );
+          console.log(i);
         undoneProjects[i].done = true;
-        updateDataBase(path, undoneProjects[i], "PATCH");
+        console.log(undoneProjects[i]);
+        updateDataBase(path, undoneProjects[i], "PATCH", "application/json");
         undoneProjects.splice(i, 1);
         renderProjects(undoneProjects);
       })

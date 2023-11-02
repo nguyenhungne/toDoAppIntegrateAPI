@@ -3,9 +3,9 @@ function redirect() {
 }
 
 const checkLogIn = () => {
-  let loggedInAccount = JSON.parse(localStorage.getItem("loggedInAccount"));
+  let accessToken = JSON.parse(localStorage.getItem("token"));
 
-  if (loggedInAccount === null) {
+  if (accessToken === null) {
     redirect();
   }
 };

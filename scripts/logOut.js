@@ -8,8 +8,7 @@ function logOut() {
   logOutButton.addEventListener("click", logOutHandle);
 
   function logOutHandle() {
-    localStorage.removeItem("loggedInAccount");
-    sessionStorage.removeItem("loggedInAccount");
+    localStorage.removeItem("token");
     redirect("http://127.0.0.1:5500/htmls/logIn.html");
   }
 }

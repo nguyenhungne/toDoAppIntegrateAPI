@@ -5,6 +5,19 @@ const userName = document.getElementById("user-name");
 const phoneNumber = document.getElementById("phone-number");
 const password = document.getElementById("password");
 
+function updateDataBase(path, data, method, contentType = "application/json") {
+  return fetch(path, {
+    method: method,
+    mode: "cors",
+    credentials: "same-origin",
+    headers: {
+      // 'bearer': loggedInAccount.token,
+      'Content-Type': contentType,
+    },
+    body: JSON.stringify(data),
+  });
+}
+
 function validity(clickedSubmit) {
   //Submit:
 
@@ -157,58 +170,32 @@ function validity(clickedSubmit) {
 }
 
 //Submit:
-let accountsList = [];
+let accountsList = {};
 let Accounts = JSON.parse(localStorage.getItem("Accounts"));
 
 formSubmit.addEventListener("click", submit);
 
-function submit(e) {
+ async function submit(e) {
   e.preventDefault();
   let clickedSubmit = true;
   let validCheck = validity(clickedSubmit);
 
-  Accounts = JSON.parse(localStorage.getItem("Accounts"));
-
-  if (Accounts === null) {
     if (validCheck) {
-      accountsList.push({
-        id:Math.floor(Date.now()*Math.random()),
+      accountsList = await {
         email: email.value,
-        userName: userName.value,
+        username: userName.value,
         password: password.value,
         phoneNumber: phoneNumber.value,
-        projects: [],
-      });
+      }
+      await updateDataBase("http://127.0.0.1:8000/users", accountsList, "POST", "application/json")
+      window.location.replace("./login.html");
     }
-
-    localStorage.setItem("Accounts", JSON.stringify(accountsList));
-
-    setTimeout(window.location.replace("./logIn.html"), 2000);
-  }
-
-  if (Accounts) {
-    if (validCheck) {
-      let Accounts = JSON.parse(localStorage.getItem("Accounts"));
-
-      Accounts.push({
-        email: email.value,
-        userName: userName.value,
-        password: password.value,
-        phoneNumber: phoneNumber.value,
-        projects: [],
-      });
-
-      localStorage.setItem("Accounts", JSON.stringify(Accounts));
-
-      setTimeout(window.location.replace("./logIn.html"), 2000);
-    }
-  }
 }
 
 const checkLogIn = () => {
-  let loggedInAccount = JSON.parse(localStorage.getItem("loggedInAccount"));
+  const accessToken = JSON.parse(localStorage.getItem("token"));
 
-  if (!(loggedInAccount === null)) {
-    setTimeout(window.location.replace("./toDoApp.html"), 2000);
+  if (!(accessToken === null)) {
+    setTimeout(window.location.replace("../htmls/projects.html"), 2000);
   }
 };
