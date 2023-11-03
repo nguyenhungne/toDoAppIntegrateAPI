@@ -10,15 +10,49 @@ const checkLogIn = () => {
   }
 };
 
-async function fetchAsync() {
-  let response = await fetch("http://127.0.0.1:8000/tasks");
+token = JSON.parse(localStorage.getItem("token"));
+const payload = token.split(".")[1];
+const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+const jsonPayload = decodeURIComponent(
+  atob(base64)
+    .split("")
+    .map(function (c) {
+      return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+    })
+    .join("")
+);
+const userIdParse = JSON.parse(jsonPayload).id;
+
+
+// load data from database
+async function fetchAsync(path = "http://127.0.0.1:8000/tasks") {
+  let response = await fetch(path, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
   let data = await response.json();
   return data;
 }
 
 fetchAsync()
   .then((data) => toDoApp(data))
-  .catch((reason) => console.log(reason.message));
+  // .catch((reason) => console.log(reason.message));
+
+  //update database
+  function updateDataBase(path, data, method, contentType = "application/json") {
+    return fetch(path, {
+      method: method,
+      mode: "cors",
+      credentials: "same-origin",
+      headers: {
+        'bearer': token,
+        'Content-Type': contentType,
+      },
+      body: JSON.stringify(data),
+    });
+  }
+
 
 function toDoApp(tasks) {
   const taskInput = document.querySelector(".task-input");
@@ -28,14 +62,14 @@ function toDoApp(tasks) {
   //get projects id
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const projectId = parseInt(urlParams.get("id"));
+  const projectId = urlParams.get("id")
 
-  let loggedInAccount = JSON.parse(localStorage.getItem("loggedInAccount"));
+  // let loggedInAccount = JSON.parse(localStorage.getItem("loggedInAccount"));
 
   const headerToDo = document.querySelector(".to-do-app-header");
   const welcomeUserParagraph = document.createElement("p");
   welcomeUserParagraph.classList.add("wellcome-user");
-  welcomeUserParagraph.textContent = `Well come ${loggedInAccount.userName} to ToDoApp 4.0`;
+  welcomeUserParagraph.textContent = `Well come to ToDoApp 4.0`;
 
   headerToDo.appendChild(welcomeUserParagraph);
 
@@ -50,11 +84,15 @@ function toDoApp(tasks) {
 
   cancelButton.addEventListener("click", handleCancel);
 
-  function updateDataBase(path, data, method) {
+  function updateDataBase(path, data, method, contentType = "application/json") {
     return fetch(path, {
       method: method,
       mode: "cors",
       credentials: "same-origin",
+      headers: {
+        'bearer': token,
+        'Content-Type': contentType,
+      },
       body: JSON.stringify(data),
     });
   }
@@ -75,7 +113,7 @@ function toDoApp(tasks) {
     tasks.forEach((element) => {
       const toDoContent = document.createElement("div");
       toDoContent.classList.add("to-do-content");
-      toDoContent.dataset.id = element.id;
+      toDoContent.dataset.id = element._id;
 
       const doneMessage = document.createElement("p");
       doneMessage.classList.add("done-message");
@@ -100,7 +138,7 @@ function toDoApp(tasks) {
     tasks.forEach((element) => {
       const toDoContent = document.createElement("div");
       toDoContent.classList.add("to-do-content");
-      toDoContent.dataset.id = element.id;
+      toDoContent.dataset.id = element._id;
 
       const checkDone = document.createElement("input");
       checkDone.classList.add("to-do-done");
@@ -131,7 +169,7 @@ function toDoApp(tasks) {
 
   let tasksArray = [];
   tasks.forEach((task) => {
-    if (task.projectId === parseInt(projectId)) {
+    if (task.projectId == projectId) {
       tasksArray.push(task);
     }
   });
@@ -151,26 +189,26 @@ function toDoApp(tasks) {
   addButton.addEventListener("click", addTask);
 
   async function addTask() {
-    let id = Math.floor(Math.random() * Date.now());
     if ((taskInput.value != "") | taskInput.value.trim()) {
+
+
       // new task to add to database
       const newTask = {
-        id: parseInt(id),
         projectId: projectId,
         task: taskInput.value,
         done: false,
-        author: loggedInAccount.userName,
+        author: userIdParse,
       };
       taskInput.value = "";
       taskInput.focus();
       filterInput.value = "UNDONE";
-      updateDataBase("http://127.0.0.1:8000/tasks", newTask, "POST");
+      await updateDataBase("http://127.0.0.1:8000/tasks", newTask, "POST", "application/json");
 
       await fetchAsync()
         .then((tasks) => {
           let tasksArray = [];
           tasks.forEach((task) => {
-            if (task.projectId === parseInt(projectId)) {
+            if (task.projectId ==projectId) {
               tasksArray.push(task);
             }
           });
@@ -243,12 +281,12 @@ function toDoApp(tasks) {
   async function handleDelete(deleteButton) {
     const id = await deleteButton.parentElement.dataset.id;
     path = await `http://127.0.0.1:8000/tasks/${id}`;
-    await updateDataBase(path, null, "DELETE");
+    await updateDataBase(path, null, "DELETE","text/plain");
     await fetchAsync()
       .then((tasks) => {
         let tasksArray = [];
         tasks.forEach((task) => {
-          if (task.projectId === parseInt(projectId)) {
+          if (task.projectId == projectId ) {
             tasksArray.push(task);
           }
         });
@@ -272,7 +310,7 @@ function toDoApp(tasks) {
     fetchAsync().then((tasks) => {
       let tasksArray = [];
       tasks.forEach((task) => {
-        if (task.projectId === parseInt(projectId)) {
+        if (task.projectId == projectId ) {
           tasksArray.push(task);
         }
       });
@@ -289,9 +327,9 @@ function toDoApp(tasks) {
 
       const id = checkBox.parentElement.dataset.id;
       path = `http://127.0.0.1:8000/tasks/${id}`;
-      const i = undoneTasks.findIndex((task) => task.id === parseInt(id));
+      const i = undoneTasks.findIndex((task) => task._id == id);
       undoneTasks[i].done = true;
-      updateDataBase(path, undoneTasks[i], "PATCH");
+      updateDataBase(path, undoneTasks[i], "PATCH", "application/json");
       undoneTasks.splice(i, 1);
       renderTask(undoneTasks);
     });
@@ -302,32 +340,26 @@ function toDoApp(tasks) {
 
   async function filterInputHandler() {
     await fetchAsync()
-      .then((tasks) => {
-        let tasksArray = [];
-        tasks.forEach((task) => {
-          if (task.projectId === parseInt(projectId)) {
-            tasksArray.push(task);
+        .then((data) => {
+          let tasksArray = data;
+          let undoneTasks = [];
+          let doneTasks = [];
+          tasksArray.forEach((task) => {
+            if (task.done === false) {
+              undoneTasks.push(task);
+            } else if (task.done === true) {
+              doneTasks.push(task);
+            }
+          });
+          if (filterInput.value === "DONE") {
+            renderTaskDone(doneTasks)
           }
-        });
 
-        let undoneTasks = [];
-        let doneTasks = [];
-        tasksArray.forEach((task) => {
-          if (task.done === false) {
-            undoneTasks.push(task);
-          } else if (task.done === true) {
-            doneTasks.push(task);
+          if (filterInput.value === "UNDONE") {
+            renderTask(undoneTasks)
           }
-        });
 
-        if (filterInput.value === "DONE") {
-          renderTaskDone(doneTasks);
-        }
-
-        if (filterInput.value === "UNDONE") {
-          renderTask(undoneTasks);
-        }
-      })
-      .catch((reason) => console.log(reason.message));
+        })
+        .catch((reason) => console.log(reason.message));
   }
 }

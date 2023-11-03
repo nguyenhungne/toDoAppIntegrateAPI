@@ -1,21 +1,36 @@
+// const jwt = require("jsonwebtoken");
+
 function redirect() {
   window.location.replace("./logIn.html");
 }
 
-const checkLogIn = () => {
-  let token = JSON.parse(localStorage.getItem("token"));
+const token = JSON.parse(localStorage.getItem("token"));
+const payload = token.split('.')[1];
+const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+}).join(''));
 
+//userId
+const userIdParse = JSON.parse(jsonPayload).id;
+
+function checkLogIn() {
   if (token === null) {
     redirect();
   }
-};
+ }
 
-//load data from database
-async function fetchAsync() {
-  let response = await fetch("http://127.0.0.1:8000/projects");
+// load data from database
+async function fetchAsync(path = "http://127.0.0.1:8000/projects") {
+  let response = await fetch(path, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
   let data = await response.json();
   return data;
 }
+
 fetchAsync()
   .then((data) => projects(data))
   .catch((reason) => console.log(reason.message));
@@ -27,7 +42,7 @@ fetchAsync()
       mode: "cors",
       credentials: "same-origin",
       headers: {
-        // 'bearer': loggedInAccount.token,
+        'bearer': token,
         'Content-Type': contentType,
       },
       body: JSON.stringify(data),
@@ -40,12 +55,13 @@ function projects(projects) {
   const cancelButton = document.querySelector(".cancel-button");
 
   let Accounts = JSON.parse(localStorage.getItem("Accounts"));
-  let loggedInAccount = JSON.parse(localStorage.getItem("loggedInAccount"));
+  // let loggedInAccount = JSON.parse(localStorage.getItem("loggedInAccount"));
 
   const headerToDo = document.querySelector(".to-do-app-header");
   const welcomeUserParagraph = document.createElement("p");
   welcomeUserParagraph.classList.add("wellcome-user");
-  welcomeUserParagraph.textContent = `Well come ${loggedInAccount.userName} to projects 4.0`;
+
+  welcomeUserParagraph.textContent = `Well come to projects 4.0`;
 
   headerToDo.appendChild(welcomeUserParagraph);
 
@@ -131,6 +147,7 @@ function projects(projects) {
   }
 
   let projectsArray = projects;
+  // console.log(projectsArray);
 
   let undoneProjects = [];
   let doneProjects = [];
@@ -145,7 +162,7 @@ function projects(projects) {
 
   renderProjects(undoneProjects);
 
-  //handle add task
+  //handle add project
   addButton.addEventListener("click", addProject);
 
   async function addProject() {
@@ -159,11 +176,29 @@ function projects(projects) {
       taskInput.value = "";
       taskInput.focus();
       filterInput.value = "UNDONE";
-      await updateDataBase(
+      const response = await updateDataBase(
         "http://127.0.0.1:8000/projects",
         newProject,
         "POST"
       );
+      const data = await response.json();
+      const projectId = data._id;
+      const userId = userIdParse; 
+
+      // create a new projectUser
+      let newProjectUser = {
+        projectId: projectId,
+        userId: userId,
+        role: 'admin'
+      };
+
+
+      await updateDataBase(
+        "http://127.0.0.1:8000/projectUsers",
+        newProjectUser,
+        "POST"
+      );
+
       await fetchAsync()
         .then((data) => {
           let projectsArray = data;
@@ -286,10 +321,10 @@ function projects(projects) {
         .catch((reason) => console.log(reason.message));
   }
 
-  Accounts.forEach(function (account, index, array) {
-    if (account.userName === loggedInAccount.userName) {
-      array.splice(index, 1, loggedInAccount);
-      localStorage.setItem("Accounts", JSON.stringify(array));
-    }
-  });
+  // Accounts.forEach(function (account, index, array) {
+  //   if (account.userName === loggedInAccount.userName) {
+  //     array.splice(index, 1, loggedInAccount);
+  //     localStorage.setItem("Accounts", JSON.stringify(array));
+  //   }
+  // });
 }

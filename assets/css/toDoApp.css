@@ -109,6 +109,7 @@ body {
   transform: translateY(-50%);
   right: 95%;
   padding: 2rem;
+  word-wrap: break-word;
 }
 
 .to-do-done {
